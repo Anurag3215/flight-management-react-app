@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 const ViewFlights = () => {
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Optional filters
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
 
@@ -13,7 +11,6 @@ const ViewFlights = () => {
     setLoading(true);
 
     let url = "https://host-demo-app.onrender.com/api/flights";
-
     if (origin !== "" || destination !== "") {
       url += `?origin=${origin}&destination=${destination}`;
     }
@@ -35,76 +32,79 @@ const ViewFlights = () => {
   }, []);
 
   return (
-    <div className="container mt-4">
-      <h2 className="text-center mb-4">View All Flights</h2>
+    <main className="page-section page-table">
+      <div className="section-header">
+        <span className="eyebrow">Flight Overview</span>
+        <h1>Search, filter, and inspect the latest flight schedules.</h1>
+      </div>
 
-      {/* Bonus Filter */}
-      <div className="row mb-3">
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Origin"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-          />
-        </div>
-
-        <div className="col-md-4">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Destination"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-          />
-        </div>
-
-        <div className="col-md-4">
-          <button className="btn btn-primary w-100" onClick={fetchFlights}>
-            Search
-          </button>
-        </div>
+      <div className="filter-panel">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Origin"
+          value={origin}
+          onChange={(e) => setOrigin(e.target.value)}
+        />
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Destination"
+          value={destination}
+          onChange={(e) => setDestination(e.target.value)}
+        />
+        <button className="btn btn-primary" onClick={fetchFlights}>
+          Search
+        </button>
       </div>
 
       {loading ? (
-        <h3 className="text-center">Loading...</h3>
+        <div className="loading-state">Loading flights…</div>
       ) : (
-        <table className="table table-bordered table-hover table-striped">
-          <thead className="table-dark">
-            <tr>
-              <th>Flight No</th>
-              <th>Airline</th>
-              <th>Origin</th>
-              <th>Destination</th>
-              <th>Date</th>
-              <th>Departure</th>
-              <th>Arrival</th>
-              <th>Fare (₹)</th>
-              <th>Available Seats</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {flights.map((flight) => (
-              <tr key={flight.id}>
-                <td>{flight.flight_number}</td>
-                <td>{flight.airline}</td>
-                <td>{flight.origin}</td>
-                <td>{flight.destination}</td>
-                <td>{flight.departure_date}</td>
-                <td>{flight.departure_time}</td>
-                <td>{flight.arrival_time}</td>
-                <td>₹{flight.fare}</td>
-                <td>{flight.available_seats}</td>
-                <td>{flight.status}</td>
+        <div className="table-card shadow">
+          <table className="flights-table">
+            <thead>
+              <tr>
+                <th>Flight</th>
+                <th>Airline</th>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Date</th>
+                <th>Departure</th>
+                <th>Arrival</th>
+                <th>Fare</th>
+                <th>Seats</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {flights.length === 0 ? (
+                <tr>
+                  <td colSpan="10" className="empty-row">
+                    No flights found. Try another search.
+                  </td>
+                </tr>
+              ) : (
+                flights.map((flight) => (
+                  <tr key={flight.id || flight.flight_number}>
+                    <td>{flight.flight_number}</td>
+                    <td>{flight.airline}</td>
+                    <td>{flight.origin}</td>
+                    <td>{flight.destination}</td>
+                    <td>{flight.departure_date}</td>
+                    <td>{flight.departure_time}</td>
+                    <td>{flight.arrival_time}</td>
+                    <td>₹{flight.fare}</td>
+                    <td>{flight.available_seats}</td>
+                    <td>{flight.status}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       )}
-    </div>
+    </main>
   );
 };
 
